@@ -20,7 +20,7 @@ services:
     build: ./viewer
     container_name: ytdl-sub-viewer
     volumes:
-      - ./config:/config:ro
+      - ./config:/config
     ports:
       - 5000:5000
     restart: unless-stopped
