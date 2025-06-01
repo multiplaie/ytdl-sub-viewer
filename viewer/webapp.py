@@ -62,14 +62,24 @@ def home():
     <body>
         <h1>Abonnements ytdl-sub</h1>
 
-        <h2>Ajouter un nouvel artiste</h2>
-        <form method="POST" action="/add" style="margin-bottom: 30px;">
-          <label>Catégorie : <input type="text" name="category" required></label><br>
-          <label>Sous-catégorie : <input type="text" name="subcategory" required></label><br>
-          <label>Artiste : <input type="text" name="artist" required></label><br>
-          <label>URL : <input type="url" name="url" required></label><br>
-          <button type="submit">Ajouter</button>
-        </form>
+        <h2>Ajouter un abonnement</h2>
+            <form method="POST" action="/add">
+            <label>Plateforme :
+                <input type="text" name="category" required>
+            </label><br>
+            <label>Sous-catégorie :
+                <input type="text" name="subcategory" required>
+            </label><br>
+            <label>Nom de l'artiste :
+                <input type="text" name="artist" required>
+            </label><br>
+            <label>URL :
+                <input type="url" name="url" required>
+            </label><br><br>
+            <button type="submit">Ajouter</button>
+            </form>
+            <hr>
+
 
         {% for category, subcats in data_no_preset.items() %}
           <h2>{{ category }}</h2>
@@ -137,33 +147,29 @@ def add():
     category = request.form.get("category")
     subcat = request.form.get("subcategory")
     artist = request.form.get("artist")
-    url_ = request.form.get("url")
+    url = request.form.get("url")
 
     config_path = "/config/ytdl-sub-configs/subscriptions.yaml"
+
     if not os.path.exists(config_path):
         return "Fichier non trouvé", 404
 
     with open(config_path, "r") as f:
         data = yaml.load(f)
 
-    if data is None:
-        data = {}
-
-    # Préserve __preset__ si présent
-    if '__preset__' not in data:
-        data['__preset__'] = {}
-
     if category not in data:
         data[category] = {}
+
     if subcat not in data[category]:
         data[category][subcat] = {}
 
-    data[category][subcat][artist] = url_
+    data[category][subcat][artist] = url
 
     with open(config_path, "w") as f:
         yaml.dump(data, f)
 
     return redirect(url_for("home"))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
