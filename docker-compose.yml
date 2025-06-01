@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  ytdl-sub:
+    image: ghcr.io/jmbannon/ytdl-sub-gui:latest
+    container_name: ytdl-sub
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    volumes:
+      - "./config:/config"
+      - "/home/multiplaie/Musique:/music"
+
+    ports:
+      - 8443:8443
+    restart: unless-stopped
+
+  viewer:
+    build: ./viewer
+    container_name: ytdl-sub-viewer
+    volumes:
+      - ./config:/config:ro
+    ports:
+      - 5000:5000
+    restart: unless-stopped

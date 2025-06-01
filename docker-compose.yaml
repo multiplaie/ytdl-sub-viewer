@@ -1,9 +1,0 @@
-services:
-  ytdl-sub-viewer:
-    build: .
-    container_name: ytdl-sub-viewer
-    volumes:
-      - ./config:/config  # monte ton dossier config avec subscriptions.yaml
-    ports:
-      - 5000:5000
-    restart: unless-stopped

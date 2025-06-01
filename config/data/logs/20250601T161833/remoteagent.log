@@ -1,0 +1,13 @@
+2025-06-01 16:18:33.725 [info] 
+
+
+
+
+2025-06-01 16:18:33.737 [info] Extension host agent started.
+2025-06-01 16:18:33.765 [info] Started initializing default profile extensions in extensions installation folder. file:///config/extensions
+2025-06-01 16:18:33.888 [info] Completed initializing default profile extensions in extensions installation folder. file:///config/extensions
+2025-06-01 16:18:36.326 [info] [192.168.1.29][4f9b7b69][ManagementConnection] New connection established.
+2025-06-01 16:18:37.217 [info] [192.168.1.29][4239da6f][ExtensionHostConnection] New connection established.
+2025-06-01 16:18:37.549 [info] [192.168.1.29][4239da6f][ExtensionHostConnection] <342> Launched Extension Host Process.
+2025-06-01 16:18:41.230 [info] [192.168.1.29][4f9b7b69][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+2025-06-01 16:18:41.319 [info] [192.168.1.29][4239da6f][ExtensionHostConnection] <342> Extension Host Process exited with code: 0, signal: null.

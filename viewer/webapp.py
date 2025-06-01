@@ -1,14 +1,18 @@
 from flask import Flask, render_template_string
 import yaml
+import os
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    with open("/config/subscriptions.yaml", "r") as f:
+    config_path = "/config/ytdl-sub-configs/subscriptions.yaml"
+    if not os.path.exists(config_path):
+        return f"<h1>Erreur</h1><p>Fichier non trouvé : {config_path}</p>"
+
+    with open(config_path, "r") as f:
         data = yaml.safe_load(f)
 
-    # Enlever la clé __preset__ si présente
     data.pop('__preset__', None)
 
     return render_template_string("""
