@@ -1,8 +1,9 @@
-from flask import Flask, render_template_string, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
 from ruamel.yaml import YAML
 import os
+import json
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -19,98 +20,13 @@ def home():
     data_no_preset = dict(data)
     data_no_preset.pop('__preset__', None)
 
-    return render_template_string("""
-    <html>
-    <head>
-        <title>ytdl-sub Abonnements</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h1 { color: #2c3e50; }
-            h2 { color: #34495e; margin-top: 30px; }
-            h3 { color: #7f8c8d; margin-top: 15px; }
-            table { border-collapse: collapse; width: 90%; margin-bottom: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; }
-            th { background-color: #2980b9; color: white; }
-            tr:nth-child(even) { background-color: #f2f2f2; }
-            a { color: #2980b9; text-decoration: none; }
-            a:hover { text-decoration: underline; }
-            button {
-                background-color: #e74c3c;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                cursor: pointer;
-                border-radius: 3px;
-            }
-            button:hover {
-                background-color: #c0392b;
-            }
-            form {
-                margin: 0;
-            }
-            label {
-                display: inline-block;
-                width: 120px;
-                margin-bottom: 10px;
-            }
-            input[type=text], input[type=url] {
-                width: 300px;
-                padding: 5px;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Abonnements ytdl-sub</h1>
+    categories = {}
+    for category, subcats in data.items():
+        if category == "__preset__":
+            continue
+        categories[category] = list(subcats.keys())
 
-        <h2>Ajouter un abonnement</h2>
-            <form method="POST" action="/add">
-            <label>Plateforme :
-                <input type="text" name="category" required>
-            </label><br>
-            <label>Sous-catégorie :
-                <input type="text" name="subcategory" required>
-            </label><br>
-            <label>Nom de l'artiste :
-                <input type="text" name="artist" required>
-            </label><br>
-            <label>URL :
-                <input type="url" name="url" required>
-            </label><br><br>
-            <button type="submit">Ajouter</button>
-            </form>
-            <hr>
-
-
-        {% for category, subcats in data_no_preset.items() %}
-          <h2>{{ category }}</h2>
-          {% for subcat, artists in subcats.items() %}
-            <h3>{{ subcat }}</h3>
-            <table>
-              <thead>
-                <tr><th>Artiste</th><th>URL</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-              {% for artist, url in artists.items() %}
-                <tr>
-                  <td>{{ artist }}</td>
-                  <td><a href="{{ url }}" target="_blank">{{ url }}</a></td>
-                  <td>
-                    <form method="POST" action="/delete" onsubmit="return confirm('Supprimer cet artiste ?');">
-                      <input type="hidden" name="category" value="{{ category }}">
-                      <input type="hidden" name="subcategory" value="{{ subcat }}">
-                      <input type="hidden" name="artist" value="{{ artist }}">
-                      <button type="submit">Supprimer</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          {% endfor %}
-        {% endfor %}
-    </body>
-    </html>
-    """, data_no_preset=data_no_preset)
+    return render_template("index.html", data=data, categories=categories, categories_json=json.dumps(categories), data_no_preset=data_no_preset)
 
 @app.route("/delete", methods=["POST"])
 def delete():
@@ -169,7 +85,6 @@ def add():
         yaml.dump(data, f)
 
     return redirect(url_for("home"))
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
